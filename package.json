@@ -1,0 +1,15 @@
+{
+  "name": "reddit-comment-checker",
+  "version": "1.0.0",
+  "description": "Polls Reddit comments from a post and notifies based on contained data",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "reddit": "^1.1.0"
+  }
+}
