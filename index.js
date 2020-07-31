@@ -1,37 +1,61 @@
 const Reddit = require('reddit');
 const axios = require('axios');
 
-const iftttKey = process.env.IFTTT_API_KEY;
+export class RedditCommentChecker {
+    constructor({ username, password, appId, appSecret, userAgent, subreddit, post, regex, stopOnMatch, iftttApiKey, iftttEvent, generateIftttValues }) {
+        this.reddit = new Reddit({ username, password, appId, appSecret, userAgent });
+        this.subreddit = subreddit;
+        this.post = post;
+        this.regex = regex;
+        this.iftttApiKey = iftttApiKey;
+        this.iftttEvent = iftttEvent;
+        this.generateIftttValues = generateIftttValues;
+        this.stopOnMatch = stopOnMatch;
+    }
 
-const reddit = new Reddit({
-    username: process.env.REDDIT_USER,
-    password: process.env.REDDIT_PASSWORD,
-    appId: process.env.REDDIT_APP_ID,
-    appSecret: process.env.REDDIT_APP_SECRET,
-    userAgent: process.env.REDDIT_USERAGENT
-});
+    async check() {
+        const response = await this.reddit.get(`/r/${this.subreddit}/comments/${this.post}`);
+        const matches = response
+            .flatMap(listing => listing.data.children) // get each comment object
+            .map(comment => comment.data.body) // get string body of each comment
+            .map(commentBody => this.regex.exec(commentBody)) // get the regex matches for the comment body
+            .filter(match => match) // filter out comments without a match
 
-const getStatus = (comment) => {
-    const regex = /.*Status.*:.*(Applied|Accepted|Rejected).*/;
-    const match = regex.exec(comment);
-    return match?.[1];
-}
+        if (matches.length > 0) {
+            const iftttValues = this.generateIftttValues && this.generateIftttValues(matches);
 
-const check = async () => {
-    const response = await reddit.get('/r/omscs/comments/h786ux');
-    const statuses = response
-        .flatMap(listing => listing.data.children) // get each comment object
-        .map(comment => comment.data.body) // get string body of each comment
-        .map(getStatus) // get the status string (Applied, Accepted, or Rejected)
-        .filter(status => status) // filter out comments without a status
-    
-    const applied = statuses.reduce((sum, status) => sum + (status === 'Applied' ? 1 : 0), 0);
-    const accepted = statuses.reduce((sum, status) => sum + (status === 'Accepted' ? 1 : 0), 0);
-    const rejected = statuses.reduce((sum, status) => sum + (status === 'Rejected' ? 1 : 0), 0);
-    console.log(`Applied: ${applied}\nAccepted: ${accepted}\nRejected: ${rejected}`);
-    if (accepted + rejected > 0) {
-        axios.get(`https://maker.ifttt.com/trigger/decision_posted/with/key/${iftttKey}?value1=${applied}&value2=${accepted}&value3=${rejected}`);
+            let queryParams = '';
+
+            if (iftttValues && iftttValues.value1) {
+                queryParams += `?value1=${iftttValues.value1}`;
+                if (iftttValues.value2) {
+                    queryParams += `&value2=${iftttValues.value2}`;
+                    if (iftttValues.value3) {
+                        queryParams += `&value3=${iftttValues.value3}`
+                    }
+                }
+            }
+
+            axios.get(`https://maker.ifttt.com/trigger/${this.iftttEvent}/with/key/${this.iftttApiKey}${queryParams}`);
+
+            if (this.stopOnMatch) {
+                this.stopPolling();
+            }
+        }
+    }
+
+    startPolling(intervalInSeconds = 3600) {
+        if (intervalInSeconds < 1) {
+            throw new Error('Cannot poll more often than once per second');
+        }
+        this.stopPolling();
+        this.timerHandle = setInterval(() => this.check(), intervalInSeconds * 1000);
+    }
+
+    stopPolling() {
+        if (this.timerHandle) {
+            clearInterval(this.timerHandle);
+            this.timerHandle = undefined;
+        }
     }
 }
-
-setInterval(check, 3600000);
