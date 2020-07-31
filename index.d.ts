@@ -24,8 +24,7 @@ declare module 'reddit-comment-fetcher' {
 
     export class RedditCommentChecker {
         private reddit: Reddit;
-        private subreddit: string;
-        private post: string;
+        private endpoint: string;
         private regex: RegExp;
         private stopOnMatch: boolean;
         private iftttApiKey: string;
