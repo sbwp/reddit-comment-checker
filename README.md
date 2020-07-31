@@ -8,13 +8,9 @@ npm install reddit-comment-checker
 
 ## Usage:
 
-First import `RedditCommentChecker` using either:
+First import the `RedditCommentChecker` class from the module:
 ```
 import { RedditCommentChecker } from 'reddit-comment-checker';
-```
-or
-```
-const { RedditCommentChecker } = require('reddit-comment-checker`);
 ```
 
 Then create a `RedditCommentChecker` by passing in the following data:
@@ -30,7 +26,7 @@ const commentChecker = new RedditCommentChecker({
     regex: /lol/,                       // Regular Expression to look for in comments
     stopOnMatch: true,                  // (Default = false) If true, stops polling after finding match and firing webhook
     iftttApiKey: 'asSFDidsijd8fsdfsdj', // API Key for IFTTT Webhook
-    iftttEvent: string,                 // Event for IFTTT Webhook
+    iftttEvent: 'doAThing',                 // Event for IFTTT Webhook
     generateIftttValues: matches => ({ value1: matches.length }) // (Optional) Function to generate query params to send to IFTTT webhook
 });
 ```
@@ -58,7 +54,7 @@ const commentChecker = new RedditCommentChecker({
     regex: /lol/,
     stopOnMatch: true,
     iftttApiKey: 'asSFDidsijd8fsdfsdj',
-    iftttEvent: string,
+    iftttEvent: 'doAThing',
     generateIftttValues: matches => ({ value1: matches.length })
 });
 

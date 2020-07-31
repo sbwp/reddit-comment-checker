@@ -1,11 +1,10 @@
-const Reddit = require('reddit');
-const axios = require('axios');
+import Reddit from 'reddit';
+import axios from 'axios';
 
 export class RedditCommentChecker {
     constructor({ username, password, appId, appSecret, userAgent, subreddit, post, regex, stopOnMatch, iftttApiKey, iftttEvent, generateIftttValues }) {
         this.reddit = new Reddit({ username, password, appId, appSecret, userAgent });
-        this.subreddit = subreddit;
-        this.post = post;
+        this.endpoint = `/r/${subreddit}/comments/${post}`;
         this.regex = regex;
         this.iftttApiKey = iftttApiKey;
         this.iftttEvent = iftttEvent;
@@ -14,9 +13,11 @@ export class RedditCommentChecker {
     }
 
     async check() {
-        const response = await this.reddit.get(`/r/${this.subreddit}/comments/${this.post}`);
-        const matches = response
-            .flatMap(listing => listing.data.children) // get each comment object
+        const response = await this.reddit.get(this.endpoint);
+
+        const comments = response.flatMap ? response.flatMap(listing => listing.data.children) : response.data.children;
+
+        const matches = comments
             .map(comment => comment.data.body) // get string body of each comment
             .map(commentBody => this.regex.exec(commentBody)) // get the regex matches for the comment body
             .filter(match => match) // filter out comments without a match

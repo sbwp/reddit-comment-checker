@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Polls Reddit comments from a post and notifies based on contained data",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,5 +12,6 @@
   "dependencies": {
     "axios": "^0.19.2",
     "reddit": "^1.1.0"
-  }
+  },
+  "repository": "https://github.com/AustinBrrtt/reddit-comment-checker"
 }
