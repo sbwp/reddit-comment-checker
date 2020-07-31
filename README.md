@@ -33,7 +33,7 @@ const commentChecker = new RedditCommentChecker({
 
 For more information on the first 5 properties, see the usage instructions for the npm module [`reddit`](https://github.com/feross/reddit).
 
-To get an IFTTT API Key for webhooks, go to [IFTTT's Webhooks page](https://ifttt.com/maker_webhooks) and follow their instructions. Once you have an API key, you can find the documentation at https://maker.ifttt.com/use/<your API key>.
+To get an IFTTT API Key for webhooks, go to [IFTTT's Webhooks page](https://ifttt.com/maker_webhooks) and follow their instructions. Once you have an API key, you can find the documentation at https://maker.ifttt.com/use/your-api-key.
 
 The final property: `generateIftttValues` is a callback that will run whenever matches are found. This takes in an array of matches, which are the return value from the `RegExp.exec()` function. Each index of the array will be an array, whose first index will be the match for your Regular Expression, and the remaining items will be any capturing groups you specify in your expression. There are additional properties for maintaining state if you use a global or sticky expression. See the [Mozilla Developer Network documentation for `RegExp.prototype.exec()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/exec) for more information.
 
