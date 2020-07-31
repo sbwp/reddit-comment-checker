@@ -1,4 +1,10 @@
-# Reddit Comment Checker
+# Reddit Comment Checker [![npm][npm-image]][npm-url] [![downloads][downloads-image]][downloads-url]
+
+[npm-image]: https://img.shields.io/npm/v/reddit-comment-checker.svg
+[npm-url]: https://npmjs.org/package/reddit-comment-checker
+[downloads-image]: https://img.shields.io/npm/dm/reddit-comment-checker.svg
+[downloads-url]: https://npmjs.org/package/reddit-comment-checker
+
 Polls Reddit comments from a post and sends an IFTTT webhook if a regular expression is matched.
 
 ## Installation:
@@ -63,4 +69,4 @@ commentChecker.startPolling(10800); // Check once every 3 hours
 setTimeout(() => commentChecker.stopPolling(), 604800000); // Give up after 3 days
 ```
 
-Note: All API keys, app IDs, app secrets, usernames, passwords, etc in this documentation are intended to be fake and nonfunctional. If you discover that any of these do in face correspond to a real account or app, please create an Issue on this project so I can correct the mistake.
+Note: All API keys, app IDs, app secrets, usernames, passwords, etc in this documentation are intended to be fake and nonfunctional. If you discover that any of these do in face correspond to a real app or account that is currently in use, please create an Issue on this project so I can correct the mistake.
