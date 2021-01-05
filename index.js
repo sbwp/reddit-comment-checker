@@ -2,14 +2,16 @@ import Reddit from 'reddit';
 import axios from 'axios';
 
 export class RedditCommentChecker {
-    constructor({ username, password, appId, appSecret, userAgent, subreddit, post, regex, stopOnMatch, iftttApiKey, iftttEvent, generateIftttValues }) {
+    constructor({ username, password, appId, appSecret, userAgent, subreddit, post, regex, stopOnMatch, stopOnNotify, iftttApiKey, iftttEvent, shouldNotify, generateIftttValues }) {
         this.reddit = new Reddit({ username, password, appId, appSecret, userAgent });
         this.endpoint = `/r/${subreddit}/comments/${post}`;
         this.regex = regex;
         this.iftttApiKey = iftttApiKey;
         this.iftttEvent = iftttEvent;
+        this.shouldNotify = shouldNotify;
         this.generateIftttValues = generateIftttValues;
         this.stopOnMatch = stopOnMatch;
+        this.stopOnNotify = stopOnNotify
     }
 
     async check() {
@@ -37,20 +39,29 @@ export class RedditCommentChecker {
                 }
             }
 
-            axios.get(`https://maker.ifttt.com/trigger/${this.iftttEvent}/with/key/${this.iftttApiKey}${queryParams}`);
+            const shouldNotify = this.shouldNotify(matches);
 
-            if (this.stopOnMatch) {
+            if (shouldNotify) {
+                axios.get(`https://maker.ifttt.com/trigger/${this.iftttEvent}/with/key/${this.iftttApiKey}${queryParams}`);
+            }
+
+            if (this.stopOnMatch || this.stopOnNotify && shouldNotify) {
                 this.stopPolling();
             }
         }
     }
 
-    startPolling(intervalInSeconds = 3600) {
+    startPolling(intervalInSeconds = 3600, stopAfter) {
         if (intervalInSeconds < 1) {
-            throw new Error('Cannot poll more often than once per second');
+            throw new Error('Cannot poll more often than once per second due to rate limiting');
         }
+
         this.stopPolling();
         this.timerHandle = setInterval(() => this.check(), intervalInSeconds * 1000);
+
+        if (stopAfter) {
+            setTimeout(() => this.stopPolling(), stopAfter * 1000);
+        }
     }
 
     stopPolling() {
