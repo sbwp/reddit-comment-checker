@@ -3,7 +3,7 @@ import { jest } from '@jest/globals';
 
 describe('Reddit Comment Checker', () => {
     // This is a temporary test to provide some sort of indication that the code is generally still working.
-    // Better tests are needed.
+    // TODO Better tests are needed.
     it('works', async () => {
         const subject = new RedditCommentChecker({
             username: 'karenSmith',

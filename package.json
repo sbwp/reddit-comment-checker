@@ -1,6 +1,6 @@
 {
   "name": "reddit-comment-checker",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Polls Reddit comments from a post and notifies based on contained data",
   "main": "src/index.js",
   "type": "module",
@@ -10,11 +10,11 @@
   "author": "Austin Barrett",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.26.1",
     "reddit": "^1.2.1"
   },
   "devDependencies": {
-    "jest": "^26.6.3"
+    "jest": "^27.5.1"
   },
   "repository": "https://github.com/AustinBrrtt/reddit-comment-checker"
 }
